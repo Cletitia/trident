@@ -12,6 +12,7 @@ import org.tron.trident.proto.Common.SmartContract.ABI;
 import org.tron.trident.proto.Common.SmartContract.ABI.Entry;
 import org.tron.trident.proto.Common.SmartContract.ABI.Entry.Param;
 import org.tron.trident.proto.Contract.CreateSmartContract;
+import org.tron.trident.utils.Numeric;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -397,7 +398,8 @@ public class Contract {
             throw new ContractCreateException("The contract does not have a constructor.");
         }
         this.constructor.encodeParameter(buildParams);
-        setBytecode(getBytecode().concat(this.constructor.getBytecode()));
+        String newBytecode = ApiWrapper.toHex(getBytecode()) + this.constructor.getBytecode();
+        setBytecode(ByteString.copyFrom(Numeric.hexStringToByteArray(newBytecode)));
         //create
         CreateSmartContract.Builder createSmartContractBuilder = CreateSmartContract.newBuilder();
         createSmartContractBuilder.setOwnerAddress(ownerAddr);

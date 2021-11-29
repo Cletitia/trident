@@ -4,6 +4,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import com.google.protobuf.ByteString;
 import org.tron.trident.abi.datatypes.Type;
+import org.tron.trident.abi.FunctionEncoder;
 import org.tron.trident.abi.TypeEncoder;
 import org.tron.trident.core.exceptions.ContractCreateException;
 import org.tron.trident.proto.Common.SmartContract.ABI;
@@ -22,7 +23,7 @@ public class ContractConstructor {
 
     private boolean payable;
 
-    private ByteString bytecode = null;
+    private String bytecode = "";
     
     public ContractConstructor(Entry raw) {
         this.rawConstructor = raw;
@@ -47,7 +48,7 @@ public class ContractConstructor {
         return this.payable;
     }
 
-    public ByteString getBytecode() {
+    public String getBytecode() {
         return this.bytecode;
     }
 
@@ -55,10 +56,6 @@ public class ContractConstructor {
         if (params.size() != paramTypes.size()) {
             throw new ContractCreateException("Parameter amount doesn't match.");
         }
-        StringBuilder builder = new StringBuilder();
-        for (Type p : params) {
-            builder.append(TypeEncoder.encode(p));
-        }
-        this.bytecode = ByteString.copyFrom(Hex.decode(builder.toString()));
+        this.bytecode = FunctionEncoder.encodeConstructor(params);
     }
 }
